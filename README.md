@@ -11,6 +11,7 @@ Create a [`RecurrenceRule`]:
 // Every two weeks on Tuesday and Thursday, but only in December.
 final rrule = RecurrenceRule(
   frequency: Frequency.weekly,
+  startDate: (DateTime.now()),
   interval: 2,
   byWeekDays: {
     ByWeekDayEntry(DateTime.tuesday),
@@ -98,6 +99,7 @@ You can convert between [`RecurrenceRule`]s and [jCal/RFC 7265][RFC 7265]-compli
 ```dart
 final json = <String, dynamic>{
   'freq': 'WEEKLY',
+  'startdate': '2022-06-24T05:45:07'
   'interval': 2,
   'byday': ['TU', 'TH'],
   'bymonth': [12],

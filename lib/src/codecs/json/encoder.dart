@@ -18,8 +18,7 @@ class RecurrenceRuleToJsonOptions {
 }
 
 @immutable
-class RecurrenceRuleToJsonEncoder
-    extends Converter<RecurrenceRule, Map<String, dynamic>> {
+class RecurrenceRuleToJsonEncoder extends Converter<RecurrenceRule, Map<String, dynamic>> {
   const RecurrenceRuleToJsonEncoder({
     this.options = const RecurrenceRuleToJsonOptions(),
   });
@@ -34,19 +33,17 @@ class RecurrenceRuleToJsonEncoder
       'freq': frequencyToString(input.frequency),
       if (input.until != null) 'until': _formatDateTime(input.until!),
       if (input.count != null) 'count': input.count,
+      if (input.startDate != null) 'startdate': _formatDateTime(input.startDate!),
       if (input.interval != null) 'interval': input.interval,
       if (input.bySeconds.isNotEmpty) 'bysecond': input.bySeconds.toList(),
       if (input.byMinutes.isNotEmpty) 'byminute': input.byMinutes.toList(),
       if (input.byHours.isNotEmpty) 'byhour': input.byHours.toList(),
-      if (input.byWeekDays.isNotEmpty)
-        'byday': input.byWeekDays.map(_byWeekDayEntryEncoder.convert).toList(),
-      if (input.byMonthDays.isNotEmpty)
-        'bymonthday': input.byMonthDays.toList(),
+      if (input.byWeekDays.isNotEmpty) 'byday': input.byWeekDays.map(_byWeekDayEntryEncoder.convert).toList(),
+      if (input.byMonthDays.isNotEmpty) 'bymonthday': input.byMonthDays.toList(),
       if (input.byYearDays.isNotEmpty) 'byyearday': input.byYearDays.toList(),
       if (input.byWeeks.isNotEmpty) 'byweekno': input.byWeeks.toList(),
       if (input.byMonths.isNotEmpty) 'bymonth': input.byMonths.toList(),
-      if (input.bySetPositions.isNotEmpty)
-        'bysetpos': input.bySetPositions.toList(),
+      if (input.bySetPositions.isNotEmpty) 'bysetpos': input.bySetPositions.toList(),
       if (input.weekStart != null) 'wkst': weekDayToString(input.weekStart!),
     };
   }

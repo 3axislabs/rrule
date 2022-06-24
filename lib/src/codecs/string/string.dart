@@ -48,6 +48,7 @@ const rruleName = 'RRULE';
 
 /// Names of `Recurrence Rule` parts as defined in [RFC 5545 Section 3.3.10](https://tools.ietf.org/html/rfc5545#section-3.3.10).
 const recurRulePartFreq = 'FREQ';
+const recurRulePartStartDate = 'DTSTART';
 const recurRulePartUntil = 'UNTIL';
 const recurRulePartCount = 'COUNT';
 const recurRulePartInterval = 'INTERVAL';

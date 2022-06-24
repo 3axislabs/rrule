@@ -6,8 +6,7 @@ import '../../recurrence_rule.dart';
 import '../string/decoder.dart';
 
 @immutable
-class RecurrenceRuleFromJsonDecoder
-    extends Converter<Map<String, dynamic>, RecurrenceRule> {
+class RecurrenceRuleFromJsonDecoder extends Converter<Map<String, dynamic>, RecurrenceRule> {
   const RecurrenceRuleFromJsonDecoder();
 
   static const _byWeekDayEntryDecoder = ByWeekDayEntryFromStringDecoder();
@@ -15,6 +14,7 @@ class RecurrenceRuleFromJsonDecoder
   @override
   RecurrenceRule convert(Map<String, dynamic> input) {
     final rawUntil = input['until'] as String?;
+    final rawStartDate = input['startdate'] as String?;
     final rawCount = input['count'] as int?;
     if (rawUntil != null && rawCount != null) {
       throw FormatException('Both `until` and `count` are specified.');
@@ -23,13 +23,13 @@ class RecurrenceRuleFromJsonDecoder
     return RecurrenceRule(
       frequency: frequencyFromString(input['freq'] as String),
       until: rawUntil == null ? null : _parseDateTime(rawUntil),
+      startDate: rawStartDate == null ? null : _parseDateTime(rawStartDate),
       count: rawCount,
       interval: input['interval'] as int?,
       bySeconds: _parseIntSet('bysecond', input['bysecond']),
       byMinutes: _parseIntSet('byminute', input['byminute']),
       byHours: _parseIntSet('byhour', input['byhour']),
-      byWeekDays:
-          _parseSet('byday', input['byday'], _byWeekDayEntryDecoder.convert),
+      byWeekDays: _parseSet('byday', input['byday'], _byWeekDayEntryDecoder.convert),
       byMonthDays: _parseIntSet('bymonthday', input['bymonthday']),
       byYearDays: _parseIntSet('byyearday', input['byyearday']),
       byWeeks: _parseIntSet('byweekno', input['byweekno']),
@@ -61,8 +61,7 @@ class RecurrenceRuleFromJsonDecoder
     );
   }
 
-  Set<int> _parseIntSet(String name, dynamic json) =>
-      _parseSet<int, int>(name, json, (it) => it);
+  Set<int> _parseIntSet(String name, dynamic json) => _parseSet<int, int>(name, json, (it) => it);
   Set<R> _parseSet<T, R>(String name, dynamic json, R Function(T) parse) {
     if (json == null) {
       return const {};

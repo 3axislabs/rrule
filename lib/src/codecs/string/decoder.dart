@@ -17,8 +17,7 @@ class RecurrenceRuleFromStringOptions {
   });
 
   const RecurrenceRuleFromStringOptions.lenient({
-    RecurrenceRuleDuplicatePartBehavior duplicatePartBehavior =
-        RecurrenceRuleDuplicatePartBehavior.mergePreferLast,
+    RecurrenceRuleDuplicatePartBehavior duplicatePartBehavior = RecurrenceRuleDuplicatePartBehavior.mergePreferLast,
   }) : this(duplicatePartBehavior: duplicatePartBehavior);
 
   final RecurrenceRuleDuplicatePartBehavior duplicatePartBehavior;
@@ -35,8 +34,7 @@ enum RecurrenceRuleDuplicatePartBehavior {
 }
 
 @immutable
-class RecurrenceRuleFromStringDecoder
-    extends Converter<String, RecurrenceRule> {
+class RecurrenceRuleFromStringDecoder extends Converter<String, RecurrenceRule> {
   const RecurrenceRuleFromStringDecoder({
     this.options = const RecurrenceRuleFromStringOptions(),
   });
@@ -47,14 +45,18 @@ class RecurrenceRuleFromStringDecoder
 
   @override
   RecurrenceRule convert(String input) {
+    final checkProperty = ICalPropertyStringCodec().decode(input);
+    if (checkProperty.name.toUpperCase() != 'RRULE') {
+      input = 'RRULE:$input';
+    }
     final property = ICalPropertyStringCodec().decode(input);
     if (property.name.toUpperCase() != 'RRULE') {
-      throw FormatException(
-          'Content line is not an RRULE but a ${property.name}!');
+      throw FormatException('Content line is not an RRULE but a ${property.name}!');
     }
 
     Frequency? frequency;
     _UntilOrCount? untilOrCount;
+    DateTime? startDate;
     int? interval;
     Set<int>? bySeconds;
     Set<int>? byMinutes;
@@ -93,13 +95,8 @@ class RecurrenceRuleFromStringDecoder
             parse: () {
               // Remove the optional "Z" suffix indicating a time in UTC as we
               // ignore time zones.
-              final normalizedValue = value.endsWith('Z')
-                  ? value.substring(0, value.length - 1)
-                  : value;
-              final match =
-                  normalizedValue.length == 8 || normalizedValue.length == 15
-                      ? DateTime.tryParse(normalizedValue)
-                      : null;
+              final normalizedValue = value.endsWith('Z') ? value.substring(0, value.length - 1) : value;
+              final match = normalizedValue.length == 8 || normalizedValue.length == 15 ? DateTime.tryParse(normalizedValue) : null;
               if (match == null) {
                 throw FormatException(
                   'Cannot parse date or date-time: "$value".',
@@ -108,6 +105,23 @@ class RecurrenceRuleFromStringDecoder
               return _UntilOrCount(
                 until: DateTimeRrule(match).copyWith(isUtc: true),
               );
+            },
+          );
+          break;
+        case recurRulePartStartDate:
+          startDate = _parseSimplePart(
+            name,
+            value,
+            oldValue: startDate,
+            parse: () {
+              final normalizedValue = value.endsWith('Z') ? value.substring(0, value.length - 1) : value;
+              final match = normalizedValue.length == 8 || normalizedValue.length == 15 ? DateTime.tryParse(normalizedValue) : null;
+              if (match == null) {
+                throw FormatException(
+                  'Cannot parse date or date-time: "$value".',
+                );
+              }
+              return DateTimeRrule(match).copyWith(isUtc: true);
             },
           );
           break;
@@ -236,6 +250,7 @@ class RecurrenceRuleFromStringDecoder
       frequency: frequency,
       until: untilOrCount?.until,
       count: untilOrCount?.count,
+      startDate: startDate,
       interval: interval,
       bySeconds: bySeconds ?? {},
       byMinutes: byMinutes ?? {},
@@ -301,8 +316,7 @@ class RecurrenceRuleFromStringDecoder
         final parsed = int.parse(e);
         final valueToCheck = allowNegative ? parsed.abs() : parsed;
         if (min > valueToCheck || valueToCheck > max) {
-          throw FormatException(
-              'Value must be in range ${allowNegative ? '±' : ''}$min–$max');
+          throw FormatException('Value must be in range ${allowNegative ? '±' : ''}$min–$max');
         }
         return parsed;
       },
@@ -323,8 +337,7 @@ class RecurrenceRuleFromStringDecoder
         newValue.add(parse(entry));
       }
     } on FormatException catch (e) {
-      throw FormatException(
-          'Invalid entry in RRULE part $name: "$value" (Exception: $e)');
+      throw FormatException('Invalid entry in RRULE part $name: "$value" (Exception: $e)');
     }
 
     if (oldValue != null) {
@@ -347,9 +360,7 @@ class RecurrenceRuleFromStringDecoder
   }
 
   void _checkDuplicatePart(String name, Object? oldValue) {
-    if (oldValue != null &&
-        options.duplicatePartBehavior ==
-            RecurrenceRuleDuplicatePartBehavior.exception) {
+    if (oldValue != null && options.duplicatePartBehavior == RecurrenceRuleDuplicatePartBehavior.exception) {
       if (name == recurRulePartUntil || name == recurRulePartCount) {
         throw FormatException('Duplicate part while parsing RRULE: $name '
             '(Only one of `UNTIL` and `COUNT` may be set.)');
@@ -395,14 +406,12 @@ class _UntilOrCount {
 }
 
 @immutable
-class ByWeekDayEntryFromStringDecoder
-    extends Converter<String, ByWeekDayEntry> {
+class ByWeekDayEntryFromStringDecoder extends Converter<String, ByWeekDayEntry> {
   const ByWeekDayEntryFromStringDecoder();
 
   @override
   ByWeekDayEntry convert(String input) {
-    final match =
-        RegExp('(?:(\\+|-)?([0-9]{1,2}))?([A-Za-z]{2})\$').matchAsPrefix(input);
+    final match = RegExp('(?:(\\+|-)?([0-9]{1,2}))?([A-Za-z]{2})\$').matchAsPrefix(input);
     if (match == null) {
       throw FormatException('Cannot parse $input');
     }

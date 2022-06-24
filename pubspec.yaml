@@ -1,7 +1,7 @@
 name: rrule
 description: Recurrence rule parsing & calculation as defined in the iCalendar RFC
-version: 0.2.10
-homepage: https://github.com/JonasWanke/rrule
+version: 0.3.0
+homepage: https://github.com/3axislabs/rrule
 
 environment:
   sdk: '>=2.12.0 <3.0.0'

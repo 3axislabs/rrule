@@ -23,6 +23,11 @@ class RecurrenceRule {
     this.until,
     this.count,
     this.interval,
+    this.startDate,
+    // start date
+    //:TODO 1: on rrule on change -> add start date - done
+    //:TODO 2: when parsing rrule to date and time -> start date (remove) and add it to our start date obj
+
     Set<int> bySeconds = const {},
     Set<int> byMinutes = const {},
     Set<int> byHours = const {},
@@ -49,16 +54,13 @@ class RecurrenceRule {
         assert(byHours.every(_debugCheckIsValidHour)),
         byHours = SplayTreeSet.of(byHours),
         assert(
-          [Frequency.monthly, Frequency.yearly].contains(frequency) ||
-              byWeekDays.noneHasOccurrence,
+          [Frequency.monthly, Frequency.yearly].contains(frequency) || byWeekDays.noneHasOccurrence,
           '"The BYDAY rule part MUST NOT be specified with a numeric value '
           'when the FREQ rule part is not set to MONTHLY or YEARLY." '
           '— https://tools.ietf.org/html/rfc5545#section-3.3.10',
         ),
         assert(
-          frequency != Frequency.yearly ||
-              byWeeks.isEmpty ||
-              byWeekDays.noneHasOccurrence,
+          frequency != Frequency.yearly || byWeeks.isEmpty || byWeekDays.noneHasOccurrence,
           '[…] the BYDAY rule part MUST NOT be specified with a numeric value '
           'with the FREQ rule part set to YEARLY when the BYWEEKNO rule part '
           'is specified.',
@@ -73,9 +75,7 @@ class RecurrenceRule {
         byMonthDays = SplayTreeSet.of(byMonthDays),
         assert(byYearDays.every(_debugCheckIsValidDayOfYear)),
         assert(
-          !([Frequency.daily, Frequency.weekly, Frequency.monthly]
-                  .contains(frequency) &&
-              byYearDays.isNotEmpty),
+          !([Frequency.daily, Frequency.weekly, Frequency.monthly].contains(frequency) && byYearDays.isNotEmpty),
           'The BYYEARDAY rule part MUST NOT be specified when the FREQ rule '
           'part is set to DAILY, WEEKLY, or MONTHLY.',
         ),
@@ -106,13 +106,11 @@ class RecurrenceRule {
 
   factory RecurrenceRule.fromString(
     String input, {
-    RecurrenceRuleFromStringOptions options =
-        const RecurrenceRuleFromStringOptions(),
+    RecurrenceRuleFromStringOptions options = const RecurrenceRuleFromStringOptions(),
   }) =>
       RecurrenceRuleFromStringDecoder(options: options).convert(input);
 
-  factory RecurrenceRule.fromJson(Map<String, dynamic> json) =>
-      RecurrenceRuleFromJsonDecoder().convert(json);
+  factory RecurrenceRule.fromJson(Map<String, dynamic> json) => RecurrenceRuleFromJsonDecoder().convert(json);
 
   /// Corresponds to the `FREQ` property.
   final Frequency frequency;
@@ -121,6 +119,9 @@ class RecurrenceRule {
   ///
   /// Corresponds to the `UNTIL` property.
   final DateTime? until;
+
+  /// Corresponds to the `startDate` property.
+  final DateTime? startDate;
 
   /// Corresponds to the `COUNT` property.
   final int? count;
@@ -337,8 +338,7 @@ class RecurrenceRule {
   /// Converts this rule to a machine-readable, RFC-5545-compliant string.
   @override
   String toString({
-    RecurrenceRuleToStringOptions options =
-        const RecurrenceRuleToStringOptions(),
+    RecurrenceRuleToStringOptions options = const RecurrenceRuleToStringOptions(isTimeUtc: true),
   }) =>
       RecurrenceRuleToStringEncoder(options: options).convert(this);
 
