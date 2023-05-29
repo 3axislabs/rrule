@@ -13,10 +13,10 @@ Future<void> main() async {
   until = endDate.add(Duration(days: 5)).toUtc();
 
   final recurrenceRule = RecurrenceRule(
-    frequency: Frequency.daily,
-    until: until,
-    interval: 2,
     startDate: start,
+    frequency: Frequency.daily,
+    interval: 2,
+    until: until,
   );
 
   print(recurrenceRule.toString());

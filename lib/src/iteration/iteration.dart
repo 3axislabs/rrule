@@ -94,9 +94,9 @@ RecurrenceRule _prepare(RecurrenceRule rrule, DateTime start) {
 
   return RecurrenceRule(
     frequency: rrule.frequency,
+    interval: rrule.interval,
     until: rrule.until,
     count: rrule.count,
-    interval: rrule.interval,
     bySeconds: rrule.bySeconds.isEmpty && rrule.frequency < Frequency.secondly
         ? {start.second}
         : rrule.bySeconds,

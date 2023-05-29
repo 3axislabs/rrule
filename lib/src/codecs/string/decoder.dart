@@ -247,11 +247,11 @@ class RecurrenceRuleFromStringDecoder extends Converter<String, RecurrenceRule> 
     }
 
     return RecurrenceRule(
+      startDate: startDate,
       frequency: frequency,
+      interval: interval,
       until: untilOrCount?.until,
       count: untilOrCount?.count,
-      startDate: startDate,
-      interval: interval,
       bySeconds: bySeconds ?? {},
       byMinutes: byMinutes ?? {},
       byHours: byHours ?? {},

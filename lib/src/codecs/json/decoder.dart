@@ -21,11 +21,11 @@ class RecurrenceRuleFromJsonDecoder extends Converter<Map<String, dynamic>, Recu
     }
     final rawWeekStart = input['wkst'] as String?;
     return RecurrenceRule(
-      frequency: frequencyFromString(input['freq'] as String),
-      until: rawUntil == null ? null : _parseDateTime(rawUntil),
       startDate: rawStartDate == null ? null : _parseDateTime(rawStartDate),
-      count: rawCount,
+      frequency: frequencyFromString(input['freq'] as String),
       interval: input['interval'] as int?,
+      until: rawUntil == null ? null : _parseDateTime(rawUntil),
+      count: rawCount,
       bySeconds: _parseIntSet('bysecond', input['bysecond']),
       byMinutes: _parseIntSet('byminute', input['byminute']),
       byHours: _parseIntSet('byhour', input['byhour']),

@@ -320,9 +320,9 @@ class RecurrenceRule {
 
     return RecurrenceRule(
       frequency: frequency ?? this.frequency,
+      interval: clearInterval ? null : interval ?? this.interval,
       until: clearUntil ? null : until ?? this.until,
       count: clearCount ? null : count ?? this.count,
-      interval: clearInterval ? null : interval ?? this.interval,
       bySeconds: bySeconds ?? this.bySeconds,
       byMinutes: byMinutes ?? this.byMinutes,
       byHours: byHours ?? this.byHours,
