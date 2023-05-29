@@ -39,7 +39,7 @@ class RecurrenceRuleToStringEncoder extends Converter<RecurrenceRule, String> {
 
     if (input.startDate != null) {
       value
-        ..writeKey(recurRulePartStartDate)
+        ..writeStart(recurRulePartStartDate)
         ..writeDateTime(input.startDate!, options);
     }
 
@@ -86,7 +86,9 @@ String? frequencyToString(Frequency? input) {
 String weekDayToString(int dayOfWeek) {
   assert(dayOfWeek.isValidRruleDayOfWeek);
 
-  return recurWeekDayValues.entries.singleWhere((e) => e.value == dayOfWeek).key;
+  return recurWeekDayValues.entries
+      .singleWhere((e) => e.value == dayOfWeek)
+      .key;
 }
 
 extension _RecurrenceRuleEncoderStringBuffer on StringBuffer {
@@ -111,6 +113,11 @@ extension _RecurrenceRuleEncoderStringBuffer on StringBuffer {
     write('=');
   }
 
+  void writeStart(String key) {
+    write(key);
+    write('=');
+  }
+
   void writeSingle(String key, Object? value) {
     if (value == null) return;
 
@@ -131,5 +138,6 @@ class ByWeekDayEntryToStringEncoder extends Converter<ByWeekDayEntry, String> {
   const ByWeekDayEntryToStringEncoder();
 
   @override
-  String convert(ByWeekDayEntry input) => '${input.occurrence ?? ''}${weekDayToString(input.day)}';
+  String convert(ByWeekDayEntry input) =>
+      '${input.occurrence ?? ''}${weekDayToString(input.day)}';
 }
