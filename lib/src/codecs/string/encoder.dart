@@ -35,13 +35,7 @@ class RecurrenceRuleToStringEncoder extends Converter<RecurrenceRule, String> {
 
   @override
   String convert(RecurrenceRule input) {
-    final value = StringBuffer('$recurRulePartFreq=${frequencyToString(input.frequency)}');
-
-    if (input.until != null) {
-      value
-        ..writeKey(recurRulePartUntil)
-        ..writeDateTime(input.until!, options);
-    }
+    final value = StringBuffer('');
 
     if (input.startDate != null) {
       value
@@ -49,9 +43,17 @@ class RecurrenceRuleToStringEncoder extends Converter<RecurrenceRule, String> {
         ..writeDateTime(input.startDate!, options);
     }
 
+    value.writeSingle(recurRulePartFreq, input.frequency);
+    value.writeSingle(recurRulePartInterval, input.interval);
+
+    if (input.until != null) {
+      value
+        ..writeKey(recurRulePartUntil)
+        ..writeDateTime(input.until!, options);
+    }
+
     value
       ..writeSingle(recurRulePartCount, input.count)
-      ..writeSingle(recurRulePartInterval, input.interval)
       ..writeList(recurRulePartBySecond, input.bySeconds)
       ..writeList(recurRulePartByMinute, input.byMinutes)
       ..writeList(recurRulePartByHour, input.byHours)
